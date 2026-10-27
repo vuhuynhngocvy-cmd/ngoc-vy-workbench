@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ngoc Vy — Personal Workbench</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #30241f;
+      --muted: #8c7770;
+      --line: #eadbd3;
+      --paper: rgba(255, 251, 248, .82);
+      --white: #fffaf7;
+      --accent: #df8052;
+      --accent-dark: #bb633c;
+      --shadow: 0 18px 50px rgba(111, 69, 48, .07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 85% 7%, #fff6ee 0, transparent 38%), linear-gradient(135deg, #f8e9df, #f6e5de 58%, #f9ece4);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+    button, input { font: inherit; }
+    .app { display: grid; grid-template-columns: 224px minmax(0, 1fr); gap: 34px; max-width: 1600px; margin: 0 auto; padding: 20px 28px 36px; }
+    aside {
+      min-height: calc(100vh - 40px); padding: 22px 14px; border: 1px solid rgba(255,255,255,.75);
+      border-radius: 24px; background: rgba(255, 250, 247, .76); box-shadow: var(--shadow);
+    }
+    .brand { padding: 2px 12px 24px; font-size: 15px; font-weight: 750; letter-spacing: -.02em; }
+    .nav-group { display: grid; gap: 5px; }
+    .nav-group + .nav-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .nav-item { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 8px 11px; border-radius: 12px; color: #66544c; font-size: 13px; }
+    .nav-item.active { color: var(--accent-dark); background: #fff; font-weight: 700; }
+    .nav-icon { display: inline-grid; place-items: center; width: 18px; color: #b78d77; font-size: 15px; }
+    main { min-width: 0; padding: 10px 8px 0 0; }
+    .topline { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 19px; }
+    .avatar { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--white); color: var(--ink); font-weight: 700; }
+    .hero { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 34px 0 22px; }
+    h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); letter-spacing: -.055em; line-height: 1.04; }
+    .welcome { margin: 11px 0 0; color: var(--muted); font-size: 14px; }
+    .hero-note { min-width: 192px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.72); border-radius: 20px; background: var(--paper); font-size: 13px; color: var(--muted); }
+    .hero-note strong { display: block; color: var(--ink); font-size: 17px; margin-bottom: 5px; }
+    .quickbar { display: flex; align-items: center; gap: 10px; padding: 8px 9px 8px 18px; border: 1px solid rgba(255,255,255,.86); border-radius: 16px; background: rgba(255,250,247,.85); box-shadow: 0 8px 25px rgba(111,69,48,.035); }
+    .quickbar input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 13px; }
+    .quickbar input::placeholder { color: #937f77; }
+    .quickbar button { width: 35px; height: 35px; border: 0; border-radius: 11px; background: var(--accent); color: white; font-size: 22px; cursor: pointer; }
+    section { margin-top: 38px; }
+    .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    h2 { margin: 0; font-size: 19px; letter-spacing: -.025em; }
+    .section-note { color: #a08b82; font-size: 11px; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .stat, .module, .entry { border: 1px solid rgba(255,255,255,.82); background: var(--paper); box-shadow: var(--shadow); }
+    .stat { min-height: 158px; padding: 21px 20px; border-radius: 21px; }
+    .stat-label { min-height: 18px; color: #806b62; font-size: 12px; }
+    .stat-value { margin: 13px 0 11px; font-size: 30px; font-weight: 750; letter-spacing: -.045em; line-height: 1.08; }
+    .stat-target { display: block; margin-top: 5px; color: #9a857c; font-size: 11px; font-weight: 500; letter-spacing: 0; }
+    .stat-copy { margin: 0; color: #806e66; font-size: 11px; line-height: 1.55; }
+    .modules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+    .module { min-height: 270px; padding: 22px; border-radius: 21px; }
+    .module h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: -.02em; }
+    .module-summary { min-height: 35px; margin: 0 0 17px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .module ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .module li { display: flex; gap: 10px; align-items: flex-start; padding-top: 10px; border-top: 1px solid #eee2dc; color: #5e4b43; font-size: 12px; line-height: 1.45; }
+    .module li::before { content: ""; flex: 0 0 7px; height: 7px; margin-top: 4px; border-radius: 50%; background: #e3926b; }
+    .entries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+    .entry { min-height: 124px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 19px; border-radius: 20px; }
+    .entry h3 { margin: 0 0 9px; font-size: 14px; }
+    .entry p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .entry button { padding: 0; border: 0; background: transparent; color: var(--accent-dark); font-size: 12px; font-weight: 650; cursor: pointer; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .action { padding: 11px 16px; border: 1px solid rgba(255,255,255,.9); border-radius: 13px; background: rgba(255,250,247,.85); color: #66544c; font-size: 12px; font-weight: 650; cursor: pointer; }
+    .action:hover, .entry button:hover { color: var(--accent-dark); }
+    .live-list { display: grid; gap: 9px; }
+    .live-item { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; padding:14px 17px; border:1px solid rgba(255,255,255,.82); border-radius:15px; background:var(--paper); }
+    .live-item strong { display:block; font-size:13px; }
+    .live-item p { margin:5px 0 0; color:var(--muted); font-size:12px; line-height:1.5; white-space:pre-wrap; }
+    .live-item small { flex:0 0 auto; color:#a08b82; font-size:10px; }
+    .sync-status { margin:8px 0 0; color:var(--muted); font-size:11px; }
+    .public-notice { margin:10px 0 0; color:#9a6a53; font-size:11px; }
+    @media (max-width: 1050px) { .app { grid-template-columns: 190px minmax(0,1fr); gap: 22px; padding: 16px; } .stats { grid-template-columns: repeat(2, 1fr); } .modules { grid-template-columns: 1fr; } .module { min-height: auto; } }
+    @media (max-width: 650px) { .app { display: block; padding: 12px; } aside { min-height: 0; margin-bottom: 22px; padding: 13px; } .brand { padding-bottom: 10px; } .nav-group { display: flex; overflow-x: auto; } .nav-group + .nav-group { margin-top: 8px; padding-top: 8px; } .nav-item { flex: 0 0 auto; } main { padding: 0 2px; } .hero { align-items: flex-start; flex-direction: column; margin-top: 27px; } .hero-note { min-width: 0; } .stats, .entries { grid-template-columns: 1fr; } .section-heading { align-items: flex-start; flex-direction: column; gap: 5px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside aria-label="Navigation">
+      <div class="brand">Ngoc Vy</div>
+      <nav>
+        <div class="nav-group">
+          <div class="nav-item active"><span class="nav-icon">⌂</span>Homepage</div>
+          <div class="nav-item"><span class="nav-icon">◷</span>Learning Progress</div>
+          <div class="nav-item"><span class="nav-icon">▤</span>Project Management</div>
+          <div class="nav-item"><span class="nav-icon">✦</span>Skills &amp; Acquisitions</div>
+        </div>
+        <div class="nav-group">
+          <div class="nav-item"><span class="nav-icon">▧</span>Profile &amp; CV</div>
+          <div class="nav-item"><span class="nav-icon">◉</span>Financial Goals</div>
+          <div class="nav-item"><span class="nav-icon">⌁</span>Networking</div>
+        </div>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="topline">
+        <span></span>
+        <div class="top-actions"><span></span><span></span><div class="avatar">N</div></div>
+      </div>
+      <header class="hero">
+        <div>
+          <h1>hello, Ngoc Vy.</h1>
+          <p class="welcome">hello</p>
+        </div>
+        <div class="hero-note"><strong></strong></div>
+      </header>
+
+      <form class="quickbar" id="quick-form" aria-label="Quick input">
+        <input id="quick-input" aria-label="Quick input" placeholder="">
+        <button type="submit" aria-label="Add">+</button>
+      </form>
+      <p class="public-notice">Anyone can view this page. Updates added here are public.</p>
+
+      <section aria-labelledby="goals-title">
+        <div class="section-heading"><h2 id="goals-title">Learning Progress</h2><span class="section-note"></span></div>
+        <div class="stats">
+          <article class="stat">
+            <div class="stat-label"></div><div class="stat-value"><span></span><small class="stat-target"></small></div>
+            <p class="stat-copy">Maintain a daily study routine and improve your grades in your major subjects to achieve an Excellent academic record.</p>
+          </article>
+          <article class="stat">
+            <div class="stat-label">English proficiency certificates (IELTS/TOEIC)</div><div class="stat-value">TOEIC 550<span class="stat-target">Target: TOEIC 750</span></div>
+            <p class="stat-copy">Expand your specialized vocabulary and practice with sample tests daily to confidently apply to multinational companies.</p>
+          </article>
+          <article class="stat">
+            <div class="stat-label">Personal savings fund</div><div class="stat-value">2,000,000 VND<span class="stat-target">Target: 10,000,000 VND</span></div>
+            <p class="stat-copy">Deduct 10% of monthly living expenses and part-time income to accumulate a reserve fund for the future.</p>
+          </article>
+          <article class="stat">
+            <div class="stat-label">Practical experience (Projects/Internships)</div><div class="stat-value">1 project<span class="stat-target">Target: 3 projects</span></div>
+            <p class="stat-copy">Actively participated in student competitions and completed a portfolio before graduation.</p>
+          </article>
+        </div>
+      </section>
+
+      <section aria-label="Development modules">
+        <div class="modules">
+          <article class="module">
+            <h3>Professional Skills</h3><p class="module-summary">Practical Tools for Effective Work</p>
+            <ul><li>Advanced Office Computing</li><li>Specialized Foreign Languages</li><li>Data Analysis &amp; AI</li></ul>
+          </article>
+          <article class="module">
+            <h3>Soft Skills &amp; Networking</h3><p class="module-summary">Developing confidence and expanding relationships</p>
+            <ul><li>Presentation &amp; Communication</li><li>Teamwork</li><li>Connecting with businesses &amp; alumni</li></ul>
+          </article>
+          <article class="module">
+            <h3>Graduation Profile &amp; Strategy</h3><p class="module-summary">Preparing for Job Applications</p>
+            <ul><li>CV &amp; LinkedIn</li><li>Interview Skills</li><li>Corporate Internships</li></ul>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="quick-title">
+        <div class="section-heading"><h2 id="quick-title">Quick entries</h2><span class="section-note"></span></div>
+        <div class="entries">
+          <article class="entry"><div><h3>+ Add quick notes</h3><p>Click here to record a to-do list</p></div><button type="button" data-action="note">+ Add quick notes</button></article>
+          <article class="entry"><div><h3>+ Progress Update</h3><p>No targets recorded yet</p></div><button type="button" data-action="goal">+ Progress Update</button></article>
+          <article class="entry"><div><h3>+ Create reminders</h3><p>No upcoming exams or assignment deadlines.</p></div><button type="button" data-action="reminder">+ Create reminders</button></article>
+        </div>
+      </section>
+
+      <section aria-labelledby="actions-title">
+        <div class="section-heading"><h2 id="actions-title"></h2></div>
+        <div class="actions"><button class="action" type="button" data-action="note">New Note</button><button class="action" type="button" data-action="goal">Create Goal</button><button class="action" type="button" data-action="reminder">Add Reminder</button></div>
+        <p class="sync-status" id="sync-status" aria-live="polite"></p>
+      </section>
+      <section aria-label="Shared updates">
+        <div class="section-heading"><h2>Recent updates</h2></div>
+        <div class="live-list" id="live-list"></div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
