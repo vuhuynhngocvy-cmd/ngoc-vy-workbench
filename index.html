@@ -33,9 +33,16 @@
     .brand { padding: 2px 12px 24px; font-size: 15px; font-weight: 750; letter-spacing: -.02em; }
     .nav-group { display: grid; gap: 5px; }
     .nav-group + .nav-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
-    .nav-item { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 8px 11px; border-radius: 12px; color: #66544c; font-size: 13px; }
-    .nav-item.active { color: var(--accent-dark); background: #fff; font-weight: 700; }
+    .nav-item { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 8px 11px; border-radius: 12px; color: #66544c; font-size: 13px; text-decoration: none; transition: background .18s ease, color .18s ease, transform .18s ease; }
+    .nav-item:hover { background: rgba(255,255,255,.72); color: var(--accent-dark); }
+    .nav-item:focus-visible { outline: 3px solid rgba(223,128,82,.42); outline-offset: 2px; }
+    .nav-item.active, .nav-item[aria-current="location"] { color: var(--accent-dark); background: #fff; font-weight: 700; }
     .nav-icon { display: inline-grid; place-items: center; width: 18px; color: #b78d77; font-size: 15px; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    section[id], main[id], article[id] { scroll-margin-top: 24px; }
+    section[id]:target { animation: section-arrive .7s ease-out; }
+    @keyframes section-arrive { from { outline: 2px solid rgba(223,128,82,.4); outline-offset: 6px; } to { outline-color: transparent; outline-offset: 0; } }
     main { min-width: 0; padding: 10px 8px 0 0; }
     .topline { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
     .top-actions { display: flex; align-items: center; gap: 19px; }
@@ -92,20 +99,20 @@
       <div class="brand">Ngoc Vy</div>
       <nav>
         <div class="nav-group">
-          <div class="nav-item active"><span class="nav-icon">⌂</span>Homepage</div>
-          <div class="nav-item"><span class="nav-icon">◷</span>Learning Progress</div>
-          <div class="nav-item"><span class="nav-icon">▤</span>Project Management</div>
-          <div class="nav-item"><span class="nav-icon">✦</span>Skills &amp; Acquisitions</div>
+          <a class="nav-item active" href="#home" aria-current="location"><span class="nav-icon" aria-hidden="true">⌂</span>Homepage</a>
+          <a class="nav-item" href="#learning-progress"><span class="nav-icon" aria-hidden="true">◷</span>Learning Progress</a>
+          <a class="nav-item" href="#quick-entries"><span class="nav-icon" aria-hidden="true">▤</span>Project Management</a>
+          <a class="nav-item" href="#skills"><span class="nav-icon" aria-hidden="true">✦</span>Skills &amp; Acquisitions</a>
         </div>
         <div class="nav-group">
-          <div class="nav-item"><span class="nav-icon">▧</span>Profile &amp; CV</div>
-          <div class="nav-item"><span class="nav-icon">◉</span>Financial Goals</div>
-          <div class="nav-item"><span class="nav-icon">⌁</span>Networking</div>
+          <a class="nav-item" href="#career"><span class="nav-icon" aria-hidden="true">▧</span>Profile &amp; CV</a>
+          <a class="nav-item" href="#learning-progress"><span class="nav-icon" aria-hidden="true">◉</span>Financial Goals</a>
+          <a class="nav-item" href="#networking"><span class="nav-icon" aria-hidden="true">⌁</span>Networking</a>
         </div>
       </nav>
     </aside>
 
-    <main>
+    <main id="home">
       <div class="topline">
         <span></span>
         <div class="top-actions"><span></span><span></span><div class="avatar">N</div></div>
@@ -124,7 +131,7 @@
       </form>
       <p class="public-notice">Anyone can view this page. Updates added here are public.</p>
 
-      <section aria-labelledby="goals-title">
+      <section id="learning-progress" aria-labelledby="goals-title">
         <div class="section-heading"><h2 id="goals-title">Learning Progress</h2><span class="section-note"></span></div>
         <div class="stats">
           <article class="stat">
@@ -146,24 +153,24 @@
         </div>
       </section>
 
-      <section aria-label="Development modules">
+      <section id="skills" aria-label="Development modules">
         <div class="modules">
           <article class="module">
             <h3>Professional Skills</h3><p class="module-summary">Practical Tools for Effective Work</p>
             <ul><li>Advanced Office Computing</li><li>Specialized Foreign Languages</li><li>Data Analysis &amp; AI</li></ul>
           </article>
-          <article class="module">
+          <article class="module" id="networking">
             <h3>Soft Skills &amp; Networking</h3><p class="module-summary">Developing confidence and expanding relationships</p>
             <ul><li>Presentation &amp; Communication</li><li>Teamwork</li><li>Connecting with businesses &amp; alumni</li></ul>
           </article>
-          <article class="module">
+          <article class="module" id="career">
             <h3>Graduation Profile &amp; Strategy</h3><p class="module-summary">Preparing for Job Applications</p>
             <ul><li>CV &amp; LinkedIn</li><li>Interview Skills</li><li>Corporate Internships</li></ul>
           </article>
         </div>
       </section>
 
-      <section aria-labelledby="quick-title">
+      <section id="quick-entries" aria-labelledby="quick-title">
         <div class="section-heading"><h2 id="quick-title">Quick entries</h2><span class="section-note"></span></div>
         <div class="entries">
           <article class="entry"><div><h3>+ Add quick notes</h3><p>Click here to record a to-do list</p></div><button type="button" data-action="note">+ Add quick notes</button></article>
@@ -183,6 +190,25 @@
       </section>
     </main>
   </div>
+  <script>
+    const navLinks = [...document.querySelectorAll('nav a[href^="#"]')];
+    function syncCurrentNav() {
+      const currentHash = window.location.hash || '#home';
+      navLinks.forEach(link => {
+        const current = link.getAttribute('href') === currentHash;
+        link.classList.toggle('active', current);
+        if (current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+    navLinks.forEach(link => link.addEventListener('click', () => {
+      window.setTimeout(syncCurrentNav, 0);
+    }));
+    window.addEventListener('hashchange', syncCurrentNav);
+    syncCurrentNav();
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
+
+
