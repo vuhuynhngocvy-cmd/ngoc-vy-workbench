@@ -28,10 +28,10 @@ export default async (request) => {
     });
   }
 
-  if (request.method === "GET") {
+const workspace = new URL(request.url).searchParams.get("workspace") || "ngoc-vy"; if (!["ngoc-vy", "diep-bao-han"].includes(workspace)) return json({ error: "Invalid workspace." }, 400); if (request.method === "GET") {
     const { blobs } = await store.list();
     const rows = await Promise.all(blobs.map(({ key }) => store.get(key, { type: "json" })));
-    return json(rows.filter(Boolean).sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
+    return json(rows.filter(Boolean).filter(row => row.workspace ? row.workspace === workspace : workspace === "ngoc-vy").sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
   }
 
   if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
@@ -45,7 +45,7 @@ export default async (request) => {
   }
 
   const record = {
-    id: randomUUID(),
+    id: randomUUID(), workspace,
     kind: item.kind,
     kindName: kindNames[item.kind],
     title: item.title.trim().slice(0, 180),
