@@ -1,7 +1,7 @@
 const list = document.querySelector("#live-list");
 const statusLine = document.querySelector("#sync-status");
 const localKey = "ngoc-vy-workbench-items";
-const endpoint = "https://super-tiramisu-bd4af1.netlify.app/.netlify/functions/items";
+const endpoint = "https://super-tiramisu-bd4af1.netlify.app/.netlify/functions/items?workspace=ngoc-vy";
 const kindNames = { note: "New Note", goal: "Progress Update", reminder: "Reminder" };
 
 function localItems() {
